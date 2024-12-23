@@ -1,5 +1,5 @@
-import style from './searchable-layout.module.css'
-import type { Children } from "@/types/layout";
+import style from "./searchable-layout.module.css";
+import type { Children } from "@/types/types";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 

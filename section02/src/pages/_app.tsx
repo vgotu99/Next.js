@@ -1,12 +1,25 @@
 import GlobalLayout from "@/components/global-layout";
-import '@/styles/globals.css'
+import "@/styles/globals.css";
+import type { NextPage } from "next";
 import type { AppProps } from "next/app";
+import type { ReactNode } from "react";
+
+type NextPageWithLayout = NextPage & {
+  getLayout?: (page: ReactNode) => ReactNode;
+};
 
 export default function App({
   // react의 App.tsx와 같이 루트 컴포넌트의 역할을 한다. 모든 페이지 컴포넌트들의 부모
   Component /*페이지 열할을 하는 컴포넌트*/,
   pageProps /*각 페이지들에게 전달될 props들을 객체로 보관한 것*/,
-}: AppProps) {
+}: AppProps & { Component: NextPageWithLayout }) {
+  const getLayout = Component.getLayout ?? ((page: ReactNode) => page);
+  // props인 Component는 현재 요청이 온 경로를 렌더링할 페이지 컴포넌트를 전달 받는다.
+  // 현재 Component는 컴포넌트 함수이기 때문에 객체 형태이다. 따라서 index.tsx에 Home.getLayout 처럼 메소드를 추가해뒀기 때문에 getLayout이 있는 경우 해당 메소드를 꺼내와서 App에서 사용할 수 있는 것이다.
+  // 따라서 getLayout이라는 method가 있는 컴포넌트가 렌더링되는 경우에만 {getLayout(<Component {...pageProps} />)}로 인해 getLayout 메소드가 리턴하는 component가 렌더링될 수 있는 것이다!
+
+  return <GlobalLayout>{getLayout(<Component {...pageProps} />)}</GlobalLayout>;
+
   // const router = useRouter();
 
   // const onClickButton = () => {
@@ -39,10 +52,4 @@ export default function App({
   //     <Component {...pageProps} />
   //   </>
   // );
-
-  return (
-    <GlobalLayout>
-      <Component {...pageProps} />
-    </GlobalLayout>
-  );
 }

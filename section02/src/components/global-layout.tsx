@@ -1,12 +1,8 @@
 import Link from "next/link";
-import { ReactNode } from "react";
 import style from "./global-layout.module.css";
+import type { Children } from "@/types/layout";
 
-interface GlobalLayoutProps {
-  children: ReactNode;
-}
-
-const GlobalLayout = ({ children }: GlobalLayoutProps) => {
+const GlobalLayout = ({ children }: Children) => { 
   return (
     <div className={style.container}>
       <header className={style.header}>

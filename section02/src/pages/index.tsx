@@ -8,6 +8,7 @@ import type {
 } from "next";
 import fetchBooks from "@/lib/fetch-books";
 import fetchRandomBooks from "@/lib/fetch-random-books";
+import Head from "next/head";
 
 // // 인덱스 페이지인 Home 컴포넌트보다 먼저 실행되어 사전 렌더링(SSR)되도록 하는 함수, 따라서 서버측에서 딱 한번만 실행되는 함수이다. 따라서 클라이언트측에서 사용하려면 리턴한 props의 값을 전달받아 사용해야한다.
 // export const getServerSideProps = async () => {
@@ -48,7 +49,7 @@ export const getStaticProps = async () => {
       allBooks,
       recommendBooks,
     },
-    // revalidate: 3, // 3초 주기로 재검증(SSG로 생성된 페이지를 재생성하여 3초마다 업데이트 반영) => 기존 SSG 방식에서 디벨롭된 ISR 방식으로 렌더링
+    revalidate: 3, // 3초 주기로 재검증(SSG로 생성된 페이지를 재생성하여 3초마다 업데이트 반영) => 기존 SSG 방식에서 디벨롭된 ISR 방식으로 렌더링
   };
 };
 
@@ -65,20 +66,31 @@ export default function Home(
   // console.log(window) // 와 같은 코드는 직접 작성할 수 없음!
 
   return (
-    <div className={style.container}>
-      <section>
-        <h3>지금 추천하는 도서</h3>
-        {recommendBooks.map((book) => (
-          <BookItem key={book.id} {...book} />
-        ))}
-      </section>
-      <section>
-        <h3>등록된 모든 도서</h3>
-        {allBooks.map((book) => (
-          <BookItem key={book.id} {...book} />
-        ))}
-      </section>
-    </div>
+    <>
+      <Head>
+        <title>한입 북스</title>
+        <meta property="og:image" content="/thumbnail.png" />
+        <meta property="og:title" content="한입 북스" />
+        <meta
+          property="og:description"
+          content="한입 북스에 등록된 도서들을 만나보세요."
+        />
+      </Head>
+      <div className={style.container}>
+        <section>
+          <h3>지금 추천하는 도서</h3>
+          {recommendBooks.map((book) => (
+            <BookItem key={book.id} {...book} />
+          ))}
+        </section>
+        <section>
+          <h3>등록된 모든 도서</h3>
+          {allBooks.map((book) => (
+            <BookItem key={book.id} {...book} />
+          ))}
+        </section>
+      </div>
+    </>
   );
 }
 

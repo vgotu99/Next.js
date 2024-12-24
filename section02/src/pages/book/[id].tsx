@@ -9,6 +9,7 @@ import { GetStaticPropsContext, InferGetStaticPropsType } from "next";
 import style from "./[id].module.css";
 import fetchOneBook from "@/lib/fetch-one-book";
 import { useRouter } from "next/router";
+import Head from "next/head";
 
 // export const getServerSideProps = async (
 //   context: GetServerSidePropsContext
@@ -62,27 +63,50 @@ const Page = ({
 }: InferGetStaticPropsType<typeof getStaticProps>) => {
   const router = useRouter();
 
-  if (router.isFallback) return "로딩중입니다..."; // router.isFallback을 이용해서 getStaticPaths의 fallback 옵션이 true, 'blocking'인 경우 아직 ssg되지 않은 페이지를 ssr로 데이터를 불러오는 중인 로딩 상태를 제어할 수 있다.
+  if (router.isFallback) // router.isFallback을 이용해서 getStaticPaths의 fallback 옵션이 true, 'blocking'인 경우 아직 ssg되지 않은 페이지를 ssr로 데이터를 불러오는 중인 로딩 상태를 제어할 수 있다.
+    return (
+      <>
+        <Head>
+          <title>한입 북스</title>
+          <meta property="og:image" content="/thumbnail.png" />
+          <meta property="og:title" content="한입 북스" />
+          <meta
+            property="og:description"
+            content="한입 북스에 등록된 도서들을 만나보세요."
+          />
+        </Head> 
+        {/* isFallback이 true인 경우에는 아직 데이터가 없을 때니까 기본적인 메타태그의 content라도 채워질 수 있도록 설정해줘야한다! */}
+        <div>로딩중입니다...</div>
+      </>
+    ); 
   if (!specificBook) return "문제가 발생했습니다. 다시 시도하세요.";
 
   const { title, subTitle, description, author, publisher, coverImgUrl } =
     specificBook;
 
   return (
-    <div className={style.container}>
-      <div
-        className={style.cover_img_container}
-        style={{ backgroundImage: `url(${coverImgUrl})` }}
-      >
-        <img src={coverImgUrl} alt="도서이미지" />
+    <>
+      <Head>
+        <title>한입 북스 - {title}</title>
+        <meta property="og:image" content={coverImgUrl} />
+        <meta property="og:title" content={`한입 북스 - ${title}`} />
+        <meta property="og:description" content={description} />
+      </Head>
+      <div className={style.container}>
+        <div
+          className={style.cover_img_container}
+          style={{ backgroundImage: `url(${coverImgUrl})` }}
+        >
+          <img src={coverImgUrl} alt="도서이미지" />
+        </div>
+        <div className={style.title}>{title}</div>
+        <div className={style.subTitle}>{subTitle}</div>
+        <div className={style.author}>
+          {author} | {publisher}
+        </div>
+        <div className={style.description}>{description}</div>
       </div>
-      <div className={style.title}>{title}</div>
-      <div className={style.subTitle}>{subTitle}</div>
-      <div className={style.author}>
-        {author} | {publisher}
-      </div>
-      <div className={style.description}>{description}</div>
-    </div>
+    </>
   );
 };
 

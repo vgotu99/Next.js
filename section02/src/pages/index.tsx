@@ -48,6 +48,7 @@ export const getStaticProps = async () => {
       allBooks,
       recommendBooks,
     },
+    // revalidate: 3, // 3초 주기로 재검증(SSG로 생성된 페이지를 재생성하여 3초마다 업데이트 반영) => 기존 SSG 방식에서 디벨롭된 ISR 방식으로 렌더링
   };
 };
 
